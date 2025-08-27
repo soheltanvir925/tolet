@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login form</title>
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet" />
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+      
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'poppins', sans-serif;
+      }
+      body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        background: url(o.jpg);
+        background-size: cover;
+        background-position: center;
+      }
+      .wrapper h1 {
+        font-size: 30px;
+        text-align: center;
+        color: black;
+      }
+      .wrapper .input-box {
+        position: relative;
+        width: 1005;
+        height: 50px;
+        margin: 30px 0;
+      }
+      .wrapper {
+        width: 420px;
+        background: transparent;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(4px);
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+        color: #fff;
+        border-radius: 10px;
+        padding: 30px 40px;
+      }
+      .input-box input {
+        width: 100%;
+        height: 100%;
+        background: transparent;
+        border: none;
+        outline: none;
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        border-radius: 40px;
+        font-size: 16px;
+        column-rule: #ffff;
+        padding: 20px 45px 20px 20px;
+      }
+      .input-box input::placeholder {
+        color: white;
+      }
+      .input-box i {
+        position: absolute;
+        right: 20px;
+        top: 50%;
+        transform: translate(-50%);
+        font-size: 20px;
+        color: black;
+      }
+      .wrapper .remember-forget {
+        color: black;
+        display: flex;
+        justify-content: space-between;
+        font-size: 14.5px;
+        margin: -15px 0 15px;
+      }
+      .remember-forget label input {
+        accent-color: blue;
+        margin-right: 3px;
+      }
+      .remember-forget a {
+        color: white;
+        text-decoration: none;
+      }
+      .remember-forget a:hover {
+        text-decoration: none;
+      }
+      .wrapper .btn {
+        width: 100%;
+        height: 40px;
+        background: #fff;
+        border: none;
+        outline: none;
+        border-radius: 40px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      }
+      .wrapper .btn:hover {
+        background: rgba(255, 255, 255, 0.2);
+        color: #fff;
+        border-radius: #fff;
+      }
+      .wrapper .register-link {
+        font-size: 14.5px;
+        text-align: center;
+        margin: 20px 0 15px;
+      }
+      .register-link p a {
+        color: black;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300..800&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+    </style>
+  </head>
+  <body>
+    <div class="wrapper">
+      <form action="{% url "login" %}" method="POST" >
+        <h1>Login</h1>
+        {% csrf_token %}
+        <div class="input-box">
+            {{ form.username}}
+          <i class="ri-user-line"></i>
+          
+        </div>
+        <div class="input-box">
+            {{ form.password}}
+          <i class="ri-lock-line"></i>
+          
+        </div>
+        <div class="remember-forget">
+          <label><input type="checkbox" />Remember me</label>
+          <a href="#">forget password</a>
+        </div>
+        <button type="submit" class="btn">Log in</button>
+        <div class="register-link">
+          <p>
+            Don't have an account? <a href="{% url "register" %}">Register</a>
+          </p>
+        </div>
+      </form>
+    </div>
+  </body>
+</html>

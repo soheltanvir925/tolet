@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {% load static %}
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Product Details</title>
+  <!-- css -->
+  <link rel="stylesheet" href="{% static 'css/product_styles.css' %}" />
+  <style>
+    /* Set the size of the map */
+    #map {
+      height: 400px;
+      width: 100%;
+      padding-bottom: 10px;
+    }
+  </style>
+</head>
+
+<body>
+  {% load static %}
+  {% include 'header.html' %}
+  <!-- product section -->
+  <section class="product-container bg-white" style="padding-top: 5px;">
+    <!-- left side -->
+    <div class="img-card">
+      <img src="{{ room.images.url }}" alt="" id="featured-image" />
+      <!-- small img -->
+      <div class="small-Card">
+        <img src="{{ room.images.url }}" alt="" class="small-Img" />
+        <img src="{{ room.images.url }}" alt="" class="small-Img" />
+        <img src="{{ room.images.url }}" alt="" class="small-Img" />
+      </div>
+    </div>
+    <!-- Right side -->
+    <div class="product-info">
+      <h3>{{ room.title }} in Uttara</h3>
+      <h5>Price: {{ room.price }} Taka/Month</h5>
+      <p>This is {{room.flat_owner}}. I have flat in {{room.address}}.
+        I want to rent it from {{room.rent_date}}.
+        It's rent price is {{room.price}}. This flat is {{room.number_of_floor}} floor.
+        Total room {{room.total_number_of_room}}, {{room.number_of_masterbed}} masterbed, and
+        {{room.number_of_washroom}} washroom. </p>
+      <div class="facility">
+        <h3><u>Facility</u></h3>
+        <ul>
+          {% if room.drowing_room %}
+          <li>
+            <label for="option1">Drowing Room</label>
+          </li>
+          {% endif %}
+          {% if room.dining_room %}
+          <li>
+            <label for="option1">Dining Room</label>
+          </li>
+          {% endif %}
+          {% if room.lift_faciligy %}
+          <li>
+            <label for="option1">Lift Facility</label>
+          </li>
+          {% endif %}
+          {% if room.gas_electric_bill_attach_with_price %}
+          <li>
+            <label for="option1">Electrict and Gas bill is include with rent price.</label>
+          </li>
+          {% else %}
+          <li>
+            <label for="option1">Electrict and Gas bill is not include with rent price.</label>
+          </li>
+          {% endif %}
+          <li>
+            <label for="gas">Gas System:{{room.gas_system}} </label>
+          </li>
+        </ul>
+      </div>
+      <h3>My Google Map</h3>
+  
+
+        <button id="getLocationBtn">Show My Location on Map</button>
+        <div class="loading-spinner" id="loadingSpinner"></div>
+        <div id="map"></div> <!-- This is where the map will be rendered -->
+        <p id="messageDisplay"></p> <!-- For displaying status/error messages -->
+
+    <!-- Leaflet JavaScript library -->
+    <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js"
+        integrity="sha256-kLaT2GOSpHezcdFfTf3fCqFf3FfJj1cK4g8=" crossorigin=""></script>
+    <script>
+        let mymap = null; // Variable to store the Leaflet map instance
+        let marker = null; // Variable to store the Leaflet marker instance
+
+        // Get references to the HTML elements
+        const getLocationBtn = document.getElementById('getLocationBtn');
+        const mapContainer = document.getElementById('map');
+        const messageDisplay = document.getElementById('messageDisplay');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+
+        // Add a click event listener to the "Show My Location on Map" button
+        getLocationBtn.addEventListener('click', function() {
+            messageDisplay.textContent = ''; // Clear any previous messages
+            loadingSpinner.style.display = 'block'; // Show the loading spinner
+            getLocationBtn.disabled = true; // Disable the button to prevent multiple clicks
+
+            // Check if the browser supports the Geolocation API
+            if (navigator.geolocation) {
+                // Request the user's current position
+                // Options: timeout (max wait time), enableHighAccuracy (request best possible result)
+                navigator.geolocation.getCurrentPosition(showPosition, showError, {
+                    timeout: 10000, // 10 seconds timeout
+                    enableHighAccuracy: true // Request for more accurate location
+                });
+            } else {
+                // Display error if geolocation is not supported
+                messageDisplay.textContent = "Geolocation is not supported by your browser.";
+                loadingSpinner.style.display = 'none'; // Hide spinner
+                getLocationBtn.disabled = false; // Re-enable button
+            }
+        });
+
+        // Callback function for successful geolocation
+        function showPosition(position) {
+            const latitude = position.coords.latitude;
+            const longitude = position.coords.longitude;
+
+            // If a map already exists, update its view and marker
+            if (mymap) {
+                mymap.setView([latitude, longitude], 15); // Center map at new location
+                if (marker) {
+                    marker.setLatLng([latitude, longitude]); // Move existing marker
+                } else {
+                    marker = L.marker([latitude, longitude]).addTo(mymap); // Add new marker
+                    marker.bindPopup("Your Current Location!").openPopup();
+                }
+            } else {
+                // If no map exists, initialize a new one
+                mymap = L.map('map').setView([latitude, longitude], 15); // Create map and set view
+
+                // Add OpenStreetMap tiles to the map
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19, // Max zoom level
+                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                }).addTo(mymap);
+
+                // Add a marker at the current location with a popup
+                marker = L.marker([latitude, longitude]).addTo(mymap);
+                marker.bindPopup("Your Current Location!").openPopup();
+            }
+
+            loadingSpinner.style.display = 'none'; // Hide loading spinner
+            getLocationBtn.disabled = false; // Re-enable the button
+            messageDisplay.textContent = 'Location successfully loaded! 🗺️'; // Success message
+        }
+
+        // Callback function for geolocation errors
+        function showError(error) {
+            loadingSpinner.style.display = 'none'; // Hide loading spinner
+            getLocationBtn.disabled = false; // Re-enable the button
+
+            let errorMessage = '';
+            // Check for the specific permissions policy error
+            if (error.code === error.PERMISSION_DENIED && error.message.includes("permissions policy")) {
+                errorMessage = "Geolocation access is restricted in this environment due to browser permissions policy. The application cannot request your location here. Please try running this code in a standalone HTML file.";
+            } else {
+                // Handle other types of geolocation errors
+                switch(error.code) {
+                    case error.PERMISSION_DENIED:
+                        errorMessage = "You denied the request for Geolocation. Please allow location access to see your position.";
+                        break;
+                    case error.POSITION_UNAVAILABLE:
+                        errorMessage = "Location information is unavailable. Try again later.";
+                        break;
+                    case error.TIMEOUT:
+                        errorMessage = "The request to get user location timed out. Please try again.";
+                        break;
+                    case error.UNKNOWN_ERROR:
+                        errorMessage = "An unknown error occurred while trying to get your location.";
+                        break;
+                }
+            }
+            
+            messageDisplay.textContent = `Error: ${errorMessage}`; // Display the error message
+            // Log the full error object for detailed debugging in the browser console
+            console.error('Geolocation Error:', { code: error.code, message: error.message, fullError: error });
+        }
+    </script>
+
+
+
+
+      <div class="quantity" style="padding-top: 10px;">
+        <button>Add to Cart</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Newsletter Start -->
+  <div class="container newsletter mt-5 wow fadeIn" data-wow-delay="0.1s">
+    <div class="row justify-content-center">
+      <div class="col-lg-10 border rounded p-1">
+        <div class="border rounded text-center p-1">
+          <div class="bg-white rounded text-center p-5">
+            <h4 class="mb-4">Subscribe Our <span class="text-primary text-uppercase">Newsletter</span></h4>
+            <div class="position-relative mx-auto" style="max-width: 400px;">
+              <input class="form-control w-100 py-3 ps-4 pe-5" type="text" placeholder="Enter your email" />
+              <button type="button"
+                class="btn btn-primary py-2 px-3 position-absolute top-0 end-0 mt-2 me-2">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Newsletter Start -->
+  <!-- Footer Start -->
+  {% include 'footer.html' %}
+  <!-- Footer End -->
+  <!-- script tags -->
+  <script src="{% static 'js/cart.js' %}"></script>
+</body>
+
+</html>

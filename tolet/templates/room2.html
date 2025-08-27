@@ -1,0 +1,76 @@
+{% extends 'master.html' %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'myglobal.css' %}" />
+{% block title %}
+  Our Blog
+{% endblock %}
+{% block content %}
+  {% include 'header.html' %}
+
+  <section id="room" class="padding-medium" style="
+    padding-top: 20px;
+    padding-bottom: 20px;">
+    <div class="container-fluid padding-side" data-aos="fade-up">
+      <div class="d-flex flex-wrap align-items-center justify-content-between">
+        <div>
+          <h3 class="display-3 fw-normal text-center">Explore our rooms</h3>
+        </div>
+        <a href="index.html" class="btn btn-arrow btn-primary mt-3">
+          <span>
+            Explore rooms<svg width="18" height="18">
+              <use xlink:href="#arrow-right"></use>
+            </svg>
+          </span>
+        </a>
+      </div>
+
+      <div class="swiper room-swiper mt-5">
+        {%for room in rooms%}
+        <div class="swiper-wrapper">
+          <div class="swiper-slide">
+            <div class="room-item position-relative bg-black rounded-4 overflow-hidden">
+              <img src="{{room.images.url}}" alt="img" class="post-image img-fluid rounded-4" style="height: 350px; width: 350px;"/>
+              <div class="product-description position-absolute p-5 text-start">
+                <h4 class="display-6 fw-normal text-white">{{room.title}} </h4>
+                <table>
+                  <tbody>
+                    <tr class="text-white">
+                      <td class="pe-2">Price:</td>
+                      <td class="price">{{room.price}}$ </td>
+                    </tr>
+                    <tr class="text-white">
+                      <td class="pe-2">Phone:</td>
+                      <td>{{room.phone_number}}</td>
+                    </tr>
+                    <tr class="text-white">
+                      <td class="pe-2">Address:</td>
+                      <td>{{room.address}}</td>
+                    </tr>
+                    <tr class="text-white">
+                      <td class="pe-2">Total Room:</td>
+                      <td>{{room.total_number_of_room}} </td>
+                    </tr>
+                    <tr class="text-white">
+                      <td class="pe-2">Services:</td>
+                      <td>Wifi, Television, Bathroom,...</td>
+                    </tr>
+                  </tbody>
+                </table>
+                <a href="{% url 'room_details' room.id %}"><p class="text-decoration-underline text-white m-0 mt-2">Browse Now</p></a>
+              </div>
+            </div>
+            <div class="room-content text-center mt-3">
+              <h4 class="display-6 fw-normal"><a href="{ {% url 'room_details' room.id %}}">{{room.title}} </a></h4>
+              <p>
+                <span class="text-primary fs-4">{{room.price}} $</span>
+              </p>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  {% include 'footer.html' %}
+{% endblock %}
