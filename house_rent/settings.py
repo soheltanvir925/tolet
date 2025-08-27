@@ -205,3 +205,11 @@ DEFAULT_FROM_EMAIL = 'soheltanvir925@gmail.com'
 
 
 LOGIN_URL = 'login'
+
+# ...existing code...
+ALLOWED_HOSTS = [
+    'localhost',
+    '127.0.0.1',
+    '18.142.230.76',  # Add your server IP here
+]
+# ...existing code...
